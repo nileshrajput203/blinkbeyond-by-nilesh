@@ -1,0 +1,19 @@
+{
+  "name": "blink-beyond",
+  "version": "1.0.0",
+  "description": "Blink Beyond digital marketing agency website",
+  "main": "server.js",
+  "scripts": {
+    "build": "echo 'No build step needed'",
+    "start": "node server.js",
+    "dev": "node server.js",
+    "lint": "echo 'No lint step defined'"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "openai": "^6.42.0"
+  }
+}

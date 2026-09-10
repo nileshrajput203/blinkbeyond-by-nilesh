@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0d0b24"/>
+      <stop offset="100%" stop-color="#05050a"/>
+    </linearGradient>
+  </defs>
+  <!-- Background Circle -->
+  <circle cx="150" cy="150" r="150" fill="url(#bgGrad)" />
+
+  <!-- Perfectly Centered Brandmark & Typography with Safe Margins -->
+  <g transform="translate(150, 150)">
+    <g transform="translate(-104, -38)">
+      <!-- Dual Chevron Fast-Forward Arrows -->
+      <path d="M 0 6 L 36 38 L 0 70 Z" fill="#FFFFFF" />
+      <path d="M 36 6 L 72 38 L 36 70 Z" fill="#FFFFFF" />
+
+      <!-- Crisp Typography -->
+      <text x="88" y="34" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="34" font-weight="900" fill="#FFFFFF" letter-spacing="-0.5">Blink</text>
+      <text x="88" y="69" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="34" font-weight="900" fill="#FFFFFF" letter-spacing="-0.5">Beyond</text>
+    </g>
+  </g>
+</svg>
