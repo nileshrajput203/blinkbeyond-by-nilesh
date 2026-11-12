@@ -1,10 +1,13 @@
 _archive_media/
 *.backup.js
 *.bak
+server.js
 server.ps1
 README.md
 replit.md
 replit.nix
 .replit
 .env.example
-
+.agents/
+api/
+package-lock.json
