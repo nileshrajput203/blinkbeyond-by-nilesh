@@ -1,0 +1,10 @@
+_archive_media/
+*.backup.js
+*.bak
+server.ps1
+README.md
+replit.md
+replit.nix
+.replit
+.env.example
+
