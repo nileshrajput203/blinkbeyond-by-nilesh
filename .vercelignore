@@ -10,4 +10,5 @@ replit.nix
 .env.example
 .agents/
 api/
+package.json
 package-lock.json
