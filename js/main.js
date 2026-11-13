@@ -737,108 +737,110 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // ── Parallax Scroll-Driven Animation ──
-  const parallaxSections = document.querySelectorAll('.parallax-word-section');
-  if (parallaxSections.length && typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+  // ── Parallax Scroll-Driven Animation (BLINK, BUILD, BOOM Master Stacking across ALL devices) ──
+  const stack = document.querySelector('.bbb-stack-wrapper');
+  const blink = document.querySelector('#section-blink');
+  const build = document.querySelector('#section-build');
+  const boom  = document.querySelector('#section-boom');
+
+  if (stack && blink && build && boom && typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
     const mm = gsap.matchMedia();
 
-    // Desktop (> 1024px) — Master Pinned Timeline for BLINK, BUILD, BOOM with deliberate dwell time & smooth rotational sweep
+    // 1. Desktop & Large Laptops (> 1024px) — Master Pinned Timeline with luxury dwell time
     mm.add("(min-width: 1025px)", () => {
-      const stack = document.querySelector('.bbb-stack-wrapper');
-      if (!stack) return;
-
-      const blink = document.querySelector('#section-blink');
-      const build = document.querySelector('#section-build');
-      const boom = document.querySelector('#section-boom');
-      if (!blink || !build || !boom) return;
-
-      const buildInner = build.querySelector('.parallax-sticky');
-      const boomInner  = boom.querySelector('.parallax-sticky');
-
-      // Setup container and cards as stacked absolute panels
-      gsap.set(stack, { position: 'relative', height: '100vh', overflow: 'hidden' });
-      gsap.set(blink, { position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1, yPercent: 0 });
+      gsap.set(stack, { position: 'relative', width: '100%', height: '100vh', overflow: 'hidden' });
+      gsap.set(blink, { position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1, yPercent: 0, autoAlpha: 1 });
       gsap.set(build, { position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 2, yPercent: 100 });
       gsap.set(boom,  { position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 3, yPercent: 100 });
 
-      if (buildInner) gsap.set(buildInner, { rotation: 16, transformOrigin: 'bottom left' });
-      if (boomInner)  gsap.set(boomInner,  { rotation: 16, transformOrigin: 'bottom left' });
+      const buildInner = build.querySelector('.parallax-sticky');
+      const boomInner  = boom.querySelector('.parallax-sticky');
+      if (buildInner) gsap.set(buildInner, { rotation: 0, clearProps: 'transform' });
+      if (boomInner)  gsap.set(boomInner,  { rotation: 0, clearProps: 'transform' });
 
-      // Parallax floating images if present
-      const buildImgs = build.querySelectorAll('.parallax-img');
-      const boomImgs  = boom.querySelectorAll('.parallax-img');
-      const entryVectors = [
-        { x: '-22vw', y: '-14vh', rot: -20 },
-        { x:  '20vw', y: '-16vh', rot:  18 },
-        { x: '-24vw', y:   '6vh', rot: -14 },
-        { x:  '10vw', y:  '22vh', rot:  12 },
-        { x: '-12vw', y:  '24vh', rot: -22 },
-        { x:  '22vw', y:  '18vh', rot:  20 },
-      ];
-      if (buildImgs.length) {
-        buildImgs.forEach((img, idx) => {
-          const vec = entryVectors[idx % entryVectors.length];
-          gsap.set(img, { x: vec.x, y: vec.y, rotation: vec.rot, scale: 0.82, opacity: 0 });
-        });
-      }
-      if (boomImgs.length) {
-        boomImgs.forEach((img, idx) => {
-          const vec = entryVectors[idx % entryVectors.length];
-          gsap.set(img, { x: vec.x, y: vec.y, rotation: vec.rot, scale: 0.82, opacity: 0 });
-        });
-      }
-
-      // Master Timeline: 320% scroll distance with scrub: 0.8 for smooth, luxury pacing
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: stack,
           start: 'top top',
-          end: '+=320%',
+          end: '+=280%',
           pin: true,
+          pinSpacing: true,
           scrub: 0.8,
           anticipatePin: 1,
+          fastScrollEnd: true,
+          preventOverlaps: true,
+          invalidateOnRefresh: true,
         }
       });
 
-      // ── Phase 1: BLINK Dwell Time (User comfortably reads BLINK) ──
-      tl.to({}, { duration: 0.6 });
-
-      // ── Phase 2: BUILD sweeps and rotates in over BLINK ──
-      tl.to(build, { yPercent: 0, duration: 1.2, ease: 'power1.inOut' });
-      if (buildInner) {
-        tl.to(buildInner, { rotation: 0, duration: 1.2, ease: 'power1.inOut' }, '<');
-      }
-      if (buildImgs.length) {
-        tl.to(buildImgs, { x: '0vw', y: '0vh', rotation: 0, scale: 1, opacity: 1, duration: 1.2, ease: 'power1.inOut' }, '<');
-      }
-
-      // ── Phase 3: BUILD Dwell Time (User comfortably reads BUILD) ──
-      tl.to({}, { duration: 0.6 });
-
-      // ── Phase 4: BOOM sweeps and rotates in over BUILD ──
-      tl.to(boom, { yPercent: 0, duration: 1.2, ease: 'power1.inOut' });
-      if (boomInner) {
-        tl.to(boomInner, { rotation: 0, duration: 1.2, ease: 'power1.inOut' }, '<');
-      }
-      if (boomImgs.length) {
-        tl.to(boomImgs, { x: '0vw', y: '0vh', rotation: 0, scale: 1, opacity: 1, duration: 1.2, ease: 'power1.inOut' }, '<');
-      }
-
-      // ── Phase 5: BOOM Dwell Time (User comfortably reads BOOM) ──
-      tl.to({}, { duration: 0.6 });
+      // Phase 1: BLINK reading dwell
+      tl.to({}, { duration: 0.5 });
+      // Phase 2: BUILD sweeps smoothly in over BLINK
+      tl.to(build, { yPercent: 0, duration: 1.2, ease: 'power2.inOut' });
+      // Phase 3: BUILD reading dwell
+      tl.to({}, { duration: 0.5 });
+      // Phase 4: BOOM sweeps smoothly in over BUILD
+      tl.to(boom, { yPercent: 0, duration: 1.2, ease: 'power2.inOut' });
+      // Phase 5: BOOM reading dwell
+      tl.to({}, { duration: 0.5 });
     });
 
-    // Mobile & Tablet (<= 1024px) — Hardware-accelerated CSS Sticky Stacking handles smooth card overlap
-    mm.add("(max-width: 1024px)", () => {
-      const stack = document.querySelector('.bbb-stack-wrapper');
-      if (stack) gsap.set(stack, { clearProps: "all" });
-      parallaxSections.forEach(section => {
-        gsap.set(section, { clearProps: "all" });
-        const inner = section.querySelector('.parallax-sticky');
-        if (inner) gsap.set(inner, { clearProps: "all" });
-        const imgs = section.querySelectorAll('.parallax-img');
-        imgs.forEach(img => gsap.set(img, { clearProps: "all" }));
+    // 2. Tablets & Medium Screens (769px to 1024px)
+    mm.add("(min-width: 769px) and (max-width: 1024px)", () => {
+      gsap.set(stack, { position: 'relative', width: '100%', height: '100vh', overflow: 'hidden' });
+      gsap.set(blink, { position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1, yPercent: 0, autoAlpha: 1 });
+      gsap.set(build, { position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 2, yPercent: 100 });
+      gsap.set(boom,  { position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 3, yPercent: 100 });
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: stack,
+          start: 'top top',
+          end: '+=240%',
+          pin: true,
+          pinSpacing: true,
+          scrub: 0.6,
+          anticipatePin: 1,
+          fastScrollEnd: true,
+          preventOverlaps: true,
+          invalidateOnRefresh: true,
+        }
       });
+
+      tl.to({}, { duration: 0.4 });
+      tl.to(build, { yPercent: 0, duration: 1.0, ease: 'power2.inOut' });
+      tl.to({}, { duration: 0.4 });
+      tl.to(boom, { yPercent: 0, duration: 1.0, ease: 'power2.inOut' });
+      tl.to({}, { duration: 0.4 });
+    });
+
+    // 3. Mobile Phones (<= 768px: iOS Safari, Android Chrome)
+    mm.add("(max-width: 768px)", () => {
+      gsap.set(stack, { position: 'relative', width: '100%', height: '100vh', overflow: 'hidden' });
+      gsap.set(blink, { position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1, yPercent: 0, autoAlpha: 1 });
+      gsap.set(build, { position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 2, yPercent: 100 });
+      gsap.set(boom,  { position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 3, yPercent: 100 });
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: stack,
+          start: 'top top',
+          end: () => '+=' + Math.round(window.innerHeight * 2.0),
+          pin: true,
+          pinSpacing: true,
+          scrub: 0.4,
+          anticipatePin: 1,
+          fastScrollEnd: true,
+          preventOverlaps: true,
+          invalidateOnRefresh: true,
+        }
+      });
+
+      tl.to({}, { duration: 0.35 });
+      tl.to(build, { yPercent: 0, duration: 1.0, ease: 'power1.inOut' });
+      tl.to({}, { duration: 0.35 });
+      tl.to(boom, { yPercent: 0, duration: 1.0, ease: 'power1.inOut' });
+      tl.to({}, { duration: 0.35 });
     });
   }
 
@@ -1041,12 +1043,15 @@ window.addEventListener('load', () => {
       ScrollTrigger.refresh();
     });
   }
-  // Debounced resize refresh
+  // Debounced resize & orientationchange refresh
   let _stResizeTimer;
   window.addEventListener('resize', () => {
     clearTimeout(_stResizeTimer);
-    _stResizeTimer = setTimeout(() => ScrollTrigger.refresh(), 250);
-  });
+    _stResizeTimer = setTimeout(() => ScrollTrigger.refresh(), 200);
+  }, { passive: true });
+  window.addEventListener('orientationchange', () => {
+    setTimeout(() => ScrollTrigger.refresh(), 300);
+  }, { passive: true });
 
   // ── Hero Parallax ──
   const triggerElement = document.querySelector('[data-parallax-layers]');
