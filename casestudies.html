@@ -58,32 +58,36 @@
   <div class="page-transition-overlay"></div>
 
   <!-- ═══════════════ PREMIUM BRANDED SPLASH SCREEN ═══════════════ -->
-  <div class="page-loader" id="page-loader">
+  <div class="page-loader" id="page-loader" aria-hidden="false">
     <div class="loader-bg-glow"></div>
     <div class="loader-center">
-      <div class="loader-title-row">
-        <div class="loader-wordmark-wrap" id="loader-wordmark-wrap">
-          <span class="loader-fill-ghost">BLINK BEYOND</span>
-          <span class="loader-fill-text" id="loader-fill-text">BLINK BEYOND</span>
-        </div>
-        <span class="loader-reg-ring" aria-hidden="true">
-          <span class="loader-reg-dot"></span>
-        </span>
+      <div class="loader-brand-wrap" id="loader-wordmark-wrap">
+        <span class="loader-wordmark-main">Blink Beyond</span>
+        <span class="loader-reg-mark">®</span>
       </div>
-      <div class="loader-tagline-box">
-        <span class="corner-bracket corner-tl"></span>
-        <span class="corner-bracket corner-tr"></span>
-        <span class="corner-bracket corner-bl"></span>
-        <span class="corner-bracket corner-br"></span>
-        <span class="loader-tagline-text">WHERE BRANDS BLINK &amp; BOOM</span>
-        <svg class="loader-tagline-wave" width="28" height="10" viewBox="0 0 28 10" fill="none" aria-hidden="true">
-          <path d="M1 5 C 3.5 1.5, 6.5 1.5, 9 5 C 11.5 8.5, 14.5 8.5, 17 5 C 19.5 1.5, 22.5 1.5, 25 5" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round"/>
-        </svg>
+      <div class="loader-bracket-card">
+        <div class="loader-bracket-corners">
+          <span class="l-corner tl"></span>
+          <span class="l-corner tr"></span>
+          <span class="l-corner bl"></span>
+          <span class="l-corner br"></span>
+        </div>
+        <div class="loader-bracket-content">
+          <span class="loader-bracket-text">WHERE BRANDS BLINK &amp; BOOM</span>
+          <svg class="loader-wave-svg" viewBox="0 0 36 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 6C4 1 7 1 10 6C13 11 16 11 19 6C22 1 25 1 28 6C31 11 34 11 35 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
       </div>
     </div>
-    <div class="loader-bottom">
-      <div class="loader-counter" id="loader-percent" data-value="0%">0%</div>
-      <div class="loader-loading-text">[Loading...]</div>
+    <div class="loader-bottom-ui">
+      <div class="loader-counter-row">
+        <span class="loader-giant-percent" id="loader-percent">0%</span>
+        <span class="loader-status-bracket">[Loading...]</span>
+      </div>
+    </div>
+    <div class="loader-progress-track">
+      <div class="loader-progress-bar" id="loader-bar-fill"></div>
     </div>
   </div>
 

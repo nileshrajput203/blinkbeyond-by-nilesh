@@ -283,11 +283,12 @@ document.addEventListener('DOMContentLoaded', () => {
   })();
 
   /* ========================================
-     PREMIUM BRANDED SPLASH SCREEN
+     PREMIUM BRANDED SPLASH SCREEN CONTROLLER
      ======================================== */
-  const loader = document.getElementById('page-loader');
+  (function initPageLoader() {
+    const loader = document.getElementById('page-loader');
+    if (!loader) return;
 
-  if (loader) {
     const docEl = document.documentElement;
 
     // Optional manual force via ?loader=1 (great for testing)
@@ -296,110 +297,156 @@ document.addEventListener('DOMContentLoaded', () => {
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.has('loader')) {
         forceLoader = true;
-        sessionStorage.removeItem('bb_preloader_seen');
-        localStorage.removeItem('bb_preloader_seen');
+        sessionStorage.removeItem('bb_loader_seen');
+        localStorage.removeItem('bb_loader_seen');
         docEl.classList.remove('bb-loader-skip', 'loader-skip');
       }
     } catch (e) {}
 
-    // Check if user has already seen the preloader on their first visit
-    const alreadySeen = !forceLoader && (
-      docEl.classList.contains('bb-loader-skip') ||
-      (function() {
-        try {
-          return sessionStorage.getItem('bb_preloader_seen') === '1' || localStorage.getItem('bb_preloader_seen') === '1';
-        } catch (e) {
-          return false;
-        }
-      })()
-    );
+    // Run preloader ONLY at session start, not on every page load
+    let hasSeenInSession = false;
+    try {
+      hasSeenInSession = !forceLoader && (sessionStorage.getItem('bb_loader_seen') === '1' || docEl.classList.contains('bb-loader-skip'));
+    } catch (e) {}
 
-    if (alreadySeen) {
+    if (hasSeenInSession) {
       docEl.classList.remove('is-preloading');
       loader.remove();
+      return;
+    }
+
+    // Mark as seen for this session
+    try {
+      sessionStorage.setItem('bb_loader_seen', '1');
+    } catch (e) {}
+
+    docEl.classList.add('is-preloading');
+
+    const counterEl = document.getElementById('loader-percent');
+    const barFill = document.getElementById('loader-bar-fill');
+
+    let current = 0;
+    let target = 20;
+    let windowLoaded = false;
+    let isExiting = false;
+    const startTime = performance.now();
+
+    // 1. Advance on DOM Ready
+    if (document.readyState === 'interactive' || document.readyState === 'complete') {
+      target = Math.max(target, 55);
     } else {
-      // Mark as seen immediately so reloads skip the preloader
-      try {
-        sessionStorage.setItem('bb_preloader_seen', '1');
-        localStorage.setItem('bb_preloader_seen', '1');
-      } catch (e) {}
+      document.addEventListener('DOMContentLoaded', () => {
+        target = Math.max(target, 55);
+      }, { once: true });
+    }
 
-      docEl.classList.add('is-preloading');
-      const counterEl = document.getElementById('loader-percent');
-      const barFill = document.getElementById('loader-bar-fill');
-      const fillText = document.getElementById('loader-fill-text');
-      let current = 0;
-      const duration = 1800; // 1.8s for a crisp, cinematic load experience
-      const startTime = performance.now();
+    // 2. Advance on Fonts Ready
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => {
+        target = Math.max(target, 78);
+      }).catch(() => {});
+    }
 
-      function animateLoader(now) {
-        const elapsed = now - startTime;
-        let progress = Math.min(elapsed / duration, 1);
-
-        // Smooth cubic ease-in-out
-        const eased = progress < 0.5
-          ? 4 * progress * progress * progress
-          : 1 - Math.pow(-2 * progress + 2, 3) / 2;
-        current = Math.floor(eased * 100);
-
-        if (counterEl) {
-          const counterValue = current + '%';
-          counterEl.textContent = counterValue;
-          counterEl.dataset.value = counterValue;
-          counterEl.style.setProperty('--progress', current + '%');
+    // 3. Advance on Critical Images
+    const imgs = Array.from(document.querySelectorAll('img[src]'));
+    if (imgs.length > 0) {
+      let loadedImgs = 0;
+      const checkImgs = () => {
+        loadedImgs++;
+        if (loadedImgs >= Math.min(imgs.length, 6)) {
+          target = Math.max(target, 88);
         }
-        if (barFill) barFill.style.width = current + '%';
-
-        if (fillText) {
-          const pct = Math.floor(eased * 100);
-          fillText.style.background = `linear-gradient(to right, #ffffff ${pct}%, rgba(255,255,255,0.28) ${pct}%)`;
-          fillText.style.webkitBackgroundClip = 'text';
-          fillText.style.backgroundClip = 'text';
-          fillText.style.webkitTextFillColor = 'transparent';
-        }
-
-        if (progress < 1) {
-          requestAnimationFrame(animateLoader);
+      };
+      imgs.slice(0, 8).forEach(img => {
+        if (img.complete) {
+          checkImgs();
         } else {
-          // Pause momentarily at 100% so user sees completion, then slide up smoothly
-          setTimeout(() => {
-            docEl.classList.remove('is-preloading');
-            loader.classList.add('hidden');
-
-            if (typeof ScrollTrigger !== 'undefined') {
-              setTimeout(() => { ScrollTrigger.refresh(); }, 50);
-            }
-
-            const fabContainer = document.querySelector('.fab-container');
-            const agentBtn = document.getElementById('ai-agent-btn');
-            if (fabContainer && typeof gsap !== 'undefined') {
-              gsap.fromTo(fabContainer,
-                { opacity: 0, scale: 0.8 },
-                { opacity: 1, scale: 1, duration: 0.4, ease: 'back.out(1.4)', clearProps: 'all' }
-              );
-            }
-            if (agentBtn && typeof gsap !== 'undefined') {
-              gsap.fromTo(agentBtn,
-                { opacity: 0, scale: 0.8 },
-                { opacity: 1, scale: 1, duration: 0.4, ease: 'back.out(1.4)', clearProps: 'all' }
-              );
-            }
-
-            // Wait until the 0.75s CSS slide-up transition completes before removing from DOM
-            setTimeout(() => {
-              if (loader && loader.parentNode) {
-                loader.remove();
-              }
-            }, 800);
-          }, 120);
+          img.addEventListener('load', checkImgs, { once: true });
+          img.addEventListener('error', checkImgs, { once: true });
         }
+      });
+    } else {
+      target = Math.max(target, 85);
+    }
+
+    // 4. Complete on Window Full Load
+    const onWindowComplete = () => {
+      windowLoaded = true;
+      target = 100;
+    };
+
+    if (document.readyState === 'complete') {
+      onWindowComplete();
+    } else {
+      window.addEventListener('load', onWindowComplete, { once: true });
+    }
+
+    // 5. Safety Ceiling: Never stall longer than 3.2s
+    setTimeout(() => {
+      windowLoaded = true;
+      target = 100;
+    }, 3200);
+
+    // 6. Smooth RAF Animation Loop
+    function stepLoader(now) {
+      if (isExiting) return;
+
+      const elapsed = now - startTime;
+      // Guarantee smooth progression even if load was instantaneous
+      const minProgressByTime = Math.min(100, (elapsed / 650) * 85);
+      const effectiveTarget = Math.max(target, minProgressByTime);
+
+      if (current < effectiveTarget) {
+        const step = Math.max(0.6, (effectiveTarget - current) * 0.14);
+        current = Math.min(effectiveTarget, current + step);
       }
 
-      requestAnimationFrame(animateLoader);
+      const displayVal = Math.floor(current);
+
+      if (counterEl) {
+        counterEl.textContent = displayVal + '%';
+      }
+      if (barFill) {
+        barFill.style.width = current + '%';
+      }
+
+      if (current >= 99.5 && windowLoaded && elapsed >= 450) {
+        isExiting = true;
+        if (counterEl) counterEl.textContent = '100%';
+        if (barFill) barFill.style.width = '100%';
+
+        // Satisfying pause at 100% before curtain lifts
+        setTimeout(() => {
+          loader.classList.add('hidden');
+
+          const fabContainer = document.querySelector('.fab-container');
+          const agentBtn = document.getElementById('ai-agent-btn');
+          if (fabContainer && typeof gsap !== 'undefined') {
+            gsap.fromTo(fabContainer,
+              { opacity: 0, scale: 0.8 },
+              { opacity: 1, scale: 1, duration: 0.35, delay: 0.3, ease: 'back.out(1.4)', clearProps: 'all' }
+            );
+          }
+          if (agentBtn && typeof gsap !== 'undefined') {
+            gsap.fromTo(agentBtn,
+              { opacity: 0, scale: 0.8 },
+              { opacity: 1, scale: 1, duration: 0.35, delay: 0.3, ease: 'back.out(1.4)', clearProps: 'all' }
+            );
+          }
+
+          // Complete curtain transition
+          setTimeout(() => {
+            docEl.classList.remove('is-preloading');
+            loader.style.display = 'none';
+          }, 850);
+        }, 160);
+      } else {
+        requestAnimationFrame(stepLoader);
+      }
     }
-  } else {
-    document.documentElement.classList.remove('is-preloading');
-  }
+
+    requestAnimationFrame(stepLoader);
+  })();
 
   /* ========================================
      SPLIT LETTERS & MAGNETIC EFFECT
