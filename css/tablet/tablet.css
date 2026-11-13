@@ -220,9 +220,9 @@
     box-sizing: border-box !important;
   }
 
-  #section-blink { z-index: 1 !important; background: #F3F3F4 !important; margin-bottom: 40vh !important; }
-  #section-build { z-index: 2 !important; background: #0a0a0a !important; box-shadow: 0 -25px 60px rgba(0, 0, 0, 0.75) !important; border-top: 1px solid rgba(255, 255, 255, 0.15) !important; border-radius: 24px 24px 0 0 !important; margin-bottom: 40vh !important; }
-  #section-boom  { z-index: 3 !important; background: var(--blue, #3D3DFF) !important; box-shadow: 0 -30px 70px rgba(0, 0, 0, 0.8) !important; border-top: 1px solid rgba(255, 255, 255, 0.25) !important; border-radius: 24px 24px 0 0 !important; margin-bottom: 40vh !important; }
+  #section-blink { z-index: 1 !important; background: #F3F3F4 !important; margin-bottom: 0 !important; }
+  #section-build { z-index: 2 !important; background: #0a0a0a !important; box-shadow: 0 -25px 60px rgba(0, 0, 0, 0.75) !important; border-top: 1px solid rgba(255, 255, 255, 0.15) !important; border-radius: 24px 24px 0 0 !important; margin-bottom: 0 !important; }
+  #section-boom  { z-index: 3 !important; background: var(--blue, #3D3DFF) !important; box-shadow: 0 -30px 70px rgba(0, 0, 0, 0.8) !important; border-top: 1px solid rgba(255, 255, 255, 0.25) !important; border-radius: 24px 24px 0 0 !important; margin-bottom: 0 !important; }
 
   /* Inner wrapper — full size, centered, transform-origin bottom left for rotational sweep */
   #section-blink .parallax-sticky,
