@@ -60,9 +60,16 @@
     border-radius: 12px !important;
   }
 
-  /* Prevent horizontal scroll / canvas overflow on mobile devices */
-  html, body {
-    overflow-x: hidden !important;
+  /* Prevent horizontal scroll without breaking position: sticky on mobile */
+  html {
+    overflow-x: clip !important;
+    max-width: 100vw !important;
+    width: 100% !important;
+    position: relative !important;
+  }
+  body {
+    overflow-x: clip !important;
+    overflow-y: visible !important;
     max-width: 100vw !important;
     width: 100% !important;
     position: relative !important;
@@ -1244,7 +1251,8 @@
   }
 
   /* ========================================
-     BLINK / BUILD / BOOM — MOBILE LAYOUT (GSAP Pinning & Card Overlap)
+     BLINK / BUILD / BOOM — MOBILE STICKY CARD STACKING OVERLAP
+     Card 1 sticks, Card 2 slides over Card 1, Card 3 slides over Card 2
      ======================================== */
   .bbb-stack-wrapper {
     position: relative !important;
@@ -1255,16 +1263,18 @@
     background: transparent !important;
     padding: 0 !important;
     display: block !important;
-    isolation: isolate !important;
+    isolation: auto !important;
   }
 
-  /* Base section container: full viewport height, allows GSAP pin and rotational sweep */
+  /* Each section is position: sticky at top: 0 with 100svh height */
   #section-blink,
   #section-build,
   #section-boom {
-    position: relative;
-    height: 100vh;
-    min-height: 100vh;
+    position: sticky !important;
+    top: 0 !important;
+    height: 100svh !important;
+    min-height: 100svh !important;
+    width: 100% !important;
     padding: 0 !important;
     margin: 0 !important;
     overflow: hidden !important;
@@ -1273,53 +1283,51 @@
     align-items: center !important;
     justify-content: center !important;
     box-sizing: border-box !important;
-    will-change: transform;
+    will-change: transform !important;
   }
 
-  /* Base Card 1: BLINK (Light background) */
+  /* Base Card 1: BLINK (Light card) */
   #section-blink {
     z-index: 1 !important;
     background: #F3F3F4 !important;
   }
 
-  /* Card 2: BUILD (Dark background - rotates and overlaps BLINK) */
+  /* Card 2: BUILD (Dark card - sticks at top and overlaps BLINK) */
   #section-build {
     z-index: 2 !important;
     background: #0a0a0a !important;
-    border-top: 1px solid rgba(255, 255, 255, 0.14) !important;
-    box-shadow: 0 -20px 50px rgba(0, 0, 0, 0.65) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.15) !important;
+    box-shadow: 0 -25px 60px rgba(0, 0, 0, 0.75) !important;
   }
 
-  /* Card 3: BOOM (Electric Blue background - rotates and overlaps BUILD) */
+  /* Card 3: BOOM (Electric Blue card - sticks at top and overlaps BUILD) */
   #section-boom  {
     z-index: 3 !important;
     background: var(--blue, #3D3DFF) !important;
-    border-top: 1px solid rgba(255, 255, 255, 0.22) !important;
-    box-shadow: 0 -25px 60px rgba(0, 0, 0, 0.7) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.25) !important;
+    box-shadow: 0 -30px 70px rgba(0, 0, 0, 0.8) !important;
   }
 
-  /* Next section after stack */
+  /* Next section after stack scrolls cleanly over BOOM */
   .trusted-section {
     position: relative !important;
-    z-index: 10 !important;
+    z-index: 4 !important;
     background: #F3F3F4 !important;
-    box-shadow: 0 -20px 50px rgba(0, 0, 0, 0.3) !important;
+    box-shadow: 0 -25px 60px rgba(0, 0, 0, 0.4) !important;
   }
 
-  /* Inner wrapper inside card — full viewport height, transform-origin bottom left for rotation */
+  /* Inner wrapper inside card — full height & perfectly centered */
   #section-blink .parallax-sticky,
   #section-build .parallax-sticky,
   #section-boom  .parallax-sticky {
     position: relative !important;
     width: 100% !important;
     height: 100% !important;
-    min-height: unset !important;
+    min-height: 100svh !important;
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
-    will-change: transform !important;
-    transform-origin: bottom left !important;
     padding: 32px 20px !important;
     background: transparent !important;
     box-sizing: border-box !important;

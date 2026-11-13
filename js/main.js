@@ -638,49 +638,49 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // ── Parallax Scroll-Driven Animation (Cards Pin & Rotational Overlap Across All Devices) ──
+  // ── Parallax Scroll-Driven Animation ──
   const parallaxSections = document.querySelectorAll('.parallax-word-section');
   if (parallaxSections.length && typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
-    parallaxSections.forEach((section, i) => {
-      gsap.set(section, { zIndex: i + 1 });
+    const mm = gsap.matchMedia();
 
-      const inner = section.querySelector('.parallax-sticky');
-      if (!inner) return;
+    // Desktop (> 1024px) — GSAP pin + 18deg rotational card sweep + image parallax
+    mm.add("(min-width: 1025px)", () => {
+      parallaxSections.forEach((section, i) => {
+        gsap.set(section, { zIndex: i + 1 });
 
-      // Pin each card while the next card slides and rotates over it
-      if (i < parallaxSections.length - 1) {
-        ScrollTrigger.create({
-          trigger: section,
-          start: 'top top',
-          end: '+=120%',
-          pin: true,
-          pinSpacing: false,
-          anticipatePin: 1,
-          fastScrollEnd: true,
-          preventOverlaps: true,
-        });
-      }
+        const inner = section.querySelector('.parallax-sticky');
+        if (!inner) return;
 
-      // Rotational entry overlap effect (BUILD and BOOM rotate into view like desktop)
-      if (i > 0) {
-        gsap.set(inner, { rotation: 18, transformOrigin: 'bottom left' });
-        gsap.to(inner, {
-          rotation: 0,
-          ease: 'none',
-          scrollTrigger: {
+        if (i < parallaxSections.length - 1) {
+          ScrollTrigger.create({
             trigger: section,
-            start: 'top bottom',
-            end: 'top top',
-            scrub: 0.3,
+            start: 'top top',
+            end: '+=120%',
+            pin: true,
+            pinSpacing: false,
+            anticipatePin: 1,
             fastScrollEnd: true,
             preventOverlaps: true,
-          },
-        });
-      }
+          });
+        }
 
-      // Parallax floating images for screens with enough space (> 768px)
-      const imgs = section.querySelectorAll('.parallax-img');
-      if (imgs.length && window.innerWidth > 768) {
+        if (i > 0) {
+          gsap.set(inner, { rotation: 18, transformOrigin: 'bottom left' });
+          gsap.to(inner, {
+            rotation: 0,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: section,
+              start: 'top bottom',
+              end: 'top top',
+              scrub: 0.3,
+              fastScrollEnd: true,
+              preventOverlaps: true,
+            },
+          });
+        }
+
+        const imgs = section.querySelectorAll('.parallax-img');
         const entryVectors = [
           { x: '-22vw', y: '-14vh', rot: -20 },
           { x:  '20vw', y: '-16vh', rot:  18 },
@@ -699,7 +699,18 @@ document.addEventListener('DOMContentLoaded', () => {
             }
           );
         });
-      }
+      });
+    });
+
+    // Mobile & Tablet (<= 1024px) — Hardware-accelerated CSS Sticky Stacking handles smooth card overlap
+    mm.add("(max-width: 1024px)", () => {
+      parallaxSections.forEach(section => {
+        gsap.set(section, { clearProps: "all" });
+        const inner = section.querySelector('.parallax-sticky');
+        if (inner) gsap.set(inner, { clearProps: "all" });
+        const imgs = section.querySelectorAll('.parallax-img');
+        imgs.forEach(img => gsap.set(img, { clearProps: "all" }));
+      });
     });
   }
 

@@ -208,19 +208,21 @@
   #section-blink,
   #section-build,
   #section-boom {
-    position: relative;
-    height: 100vh;
-    min-height: 100vh;
+    position: sticky !important;
+    top: 0 !important;
+    height: 100svh !important;
+    min-height: 100svh !important;
     padding: 0 !important;
     overflow: hidden !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
+    box-sizing: border-box !important;
   }
 
-  #section-blink { z-index: 1; background: #F3F3F4 !important; }
-  #section-build { z-index: 2; background: #0a0a0a !important; box-shadow: 0 -20px 50px rgba(0, 0, 0, 0.6) !important; border-top: 1px solid rgba(255, 255, 255, 0.12) !important; }
-  #section-boom  { z-index: 3; background: var(--blue, #3D3DFF) !important; box-shadow: 0 -20px 50px rgba(0, 0, 0, 0.6) !important; border-top: 1px solid rgba(255, 255, 255, 0.2) !important; }
+  #section-blink { z-index: 1 !important; background: #F3F3F4 !important; }
+  #section-build { z-index: 2 !important; background: #0a0a0a !important; box-shadow: 0 -25px 60px rgba(0, 0, 0, 0.75) !important; border-top: 1px solid rgba(255, 255, 255, 0.15) !important; }
+  #section-boom  { z-index: 3 !important; background: var(--blue, #3D3DFF) !important; box-shadow: 0 -30px 70px rgba(0, 0, 0, 0.8) !important; border-top: 1px solid rgba(255, 255, 255, 0.25) !important; }
 
   /* Inner wrapper — full size, centered, transform-origin bottom left for rotational sweep */
   #section-blink .parallax-sticky,

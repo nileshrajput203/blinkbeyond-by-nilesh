@@ -1868,16 +1868,18 @@ body.nav-open .ticker-wrap {
   }
 }
 
-/* Mobile — images hidden, clean static card layout */
+/* Mobile — full viewport sticky stacking */
 @media (max-width: 768px) {
   .parallax-word-section {
-    min-height: auto;
-    overflow: visible;
+    min-height: 100svh;
+    height: 100svh;
+    overflow: hidden;
   }
 
   .parallax-sticky {
-    min-height: auto;
-    overflow: visible;
+    min-height: 100svh;
+    height: 100%;
+    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
