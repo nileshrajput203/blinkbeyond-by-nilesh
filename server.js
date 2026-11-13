@@ -108,7 +108,10 @@ const server = http.createServer((req, res) => {
     return handleAgentAPI(req, res);
   }
 
-  const rawPath = req.url.split('?')[0];
+  let rawPath = req.url.split('?')[0];
+  try {
+    rawPath = decodeURIComponent(rawPath);
+  } catch (e) {}
   const resolved = path.join(__dirname, rawPath === '/' ? 'index.html' : rawPath);
 
   // Prevent directory traversal outside the web root
