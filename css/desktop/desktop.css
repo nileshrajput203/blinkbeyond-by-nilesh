@@ -1610,7 +1610,7 @@ body.bb-card-hint-seen .info-card .info-card-content::after {
 .fs-link:hover,
 .fs-link.active {
   color: #fff;
-  text-shadow: 0 0 20px rgba(255, 255, 255, 0.6), 0 0 40px rgba(61, 61, 255, 0.8);
+  text-shadow: none;
 }
 
 /* ── Text-roll wrapper: sized by the relative top layer ── */
