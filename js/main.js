@@ -173,7 +173,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!currentFile || currentFile === '/') currentFile = 'index.html';
     if (!currentFile.endsWith('.html')) currentFile += '.html';
 
-    document.querySelectorAll('.footer-links-col a, .footer-services-col a, .fs-link').forEach(link => {
+    // Only highlight active page in Quick Links and Fullscreen Menu (not sub-services)
+    document.querySelectorAll('.footer-links-col a, .fs-link').forEach(link => {
       const rawHref = link.getAttribute('href');
       if (!rawHref) return;
       let linkFile = rawHref.split('/').pop().split('?')[0].split('#')[0];

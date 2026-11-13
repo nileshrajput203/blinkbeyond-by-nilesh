@@ -3890,15 +3890,12 @@ body.contact-page {
 .footer-links-col a:hover,
 .footer-services-col a:hover,
 .footer-links-col a.active,
-.footer-services-col a.active,
-.footer-links-col a[aria-current="page"],
-.footer-services-col a[aria-current="page"] {
+.footer-links-col a[aria-current="page"] {
   color: var(--white);
   transform: translateX(4px);
 }
 
-.footer-links-col a.active,
-.footer-services-col a.active {
+.footer-links-col a.active {
   color: #ffffff;
   font-weight: 600;
   text-shadow: 0 0 10px rgba(61, 61, 255, 0.7), 0 0 20px rgba(61, 61, 255, 0.4);
@@ -3907,9 +3904,7 @@ body.contact-page {
 .footer-links-col a:hover::before,
 .footer-services-col a:hover::before,
 .footer-links-col a.active::before,
-.footer-services-col a.active::before,
-.footer-links-col a[aria-current="page"]::before,
-.footer-services-col a[aria-current="page"]::before {
+.footer-links-col a[aria-current="page"]::before {
   width: 100%;
   background: #3d3dff;
   box-shadow: 0 0 8px rgba(61, 61, 255, 0.9), 0 0 3px #ffffff;
