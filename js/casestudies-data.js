@@ -462,7 +462,7 @@ window.INSTAGRAM_GRID_DATA = [
   {
     id: 'insta-2',
     type: 'reel',
-    videoUrl: 'assets/media/Maharashtra Day.mp4',
+    videoUrl: 'assets/media/maharashtra-day.mp4',
     title: 'High-Impact Brand Motion Showcase',
     likes: '62.8K',
     comments: '931',

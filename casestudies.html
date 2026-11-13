@@ -607,7 +607,7 @@
               <!-- Card Preview Canvas with Demo Image in Start -->
               <div class="webdev-card-preview" style="background: ${p.thumbnailGradient};">
                 ${p.heroImage ? `
-                  <img src="${p.heroImage}" alt="${p.title} Demo Preview" class="webdev-card-demo-img" loading="lazy">
+                  <img src="${p.heroImage}" alt="${p.title} Demo Preview" class="webdev-card-demo-img" loading="lazy" onerror="this.style.display='none'">
                   <div class="webdev-card-preview-overlay"></div>
                 ` : ''}
                 <div class="webdev-card-preview-top">
@@ -804,6 +804,7 @@
         
         const imgEl = document.getElementById('csPreviewImage');
         if (imgEl) {
+          imgEl.onerror = () => { imgEl.src = 'assets/images/hero-showreel.png'; };
           imgEl.src = project.heroImage || 'assets/images/hero-showreel.png';
           imgEl.alt = project.title;
         }
