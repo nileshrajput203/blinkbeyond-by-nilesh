@@ -643,67 +643,96 @@ document.addEventListener('DOMContentLoaded', () => {
   if (parallaxSections.length && typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
     const mm = gsap.matchMedia();
 
-    // Desktop (> 1024px) — GSAP pin + 18deg rotational card sweep + image parallax
+    // Desktop (> 1024px) — Master Pinned Timeline for BLINK, BUILD, BOOM with deliberate dwell time & smooth rotational sweep
     mm.add("(min-width: 1025px)", () => {
-      parallaxSections.forEach((section, i) => {
-        gsap.set(section, { zIndex: i + 1 });
+      const stack = document.querySelector('.bbb-stack-wrapper');
+      if (!stack) return;
 
-        const inner = section.querySelector('.parallax-sticky');
-        if (!inner) return;
+      const blink = document.querySelector('#section-blink');
+      const build = document.querySelector('#section-build');
+      const boom = document.querySelector('#section-boom');
+      if (!blink || !build || !boom) return;
 
-        if (i < parallaxSections.length - 1) {
-          ScrollTrigger.create({
-            trigger: section,
-            start: 'top top',
-            end: '+=120%',
-            pin: true,
-            pinSpacing: false,
-            anticipatePin: 1,
-            fastScrollEnd: true,
-            preventOverlaps: true,
-          });
-        }
+      const buildInner = build.querySelector('.parallax-sticky');
+      const boomInner  = boom.querySelector('.parallax-sticky');
 
-        if (i > 0) {
-          gsap.set(inner, { rotation: 18, transformOrigin: 'bottom left' });
-          gsap.to(inner, {
-            rotation: 0,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: section,
-              start: 'top bottom',
-              end: 'top top',
-              scrub: 0.3,
-              fastScrollEnd: true,
-              preventOverlaps: true,
-            },
-          });
-        }
+      // Setup container and cards as stacked absolute panels
+      gsap.set(stack, { position: 'relative', height: '100vh', overflow: 'hidden' });
+      gsap.set(blink, { position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1, yPercent: 0 });
+      gsap.set(build, { position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 2, yPercent: 100 });
+      gsap.set(boom,  { position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 3, yPercent: 100 });
 
-        const imgs = section.querySelectorAll('.parallax-img');
-        const entryVectors = [
-          { x: '-22vw', y: '-14vh', rot: -20 },
-          { x:  '20vw', y: '-16vh', rot:  18 },
-          { x: '-24vw', y:   '6vh', rot: -14 },
-          { x:  '10vw', y:  '22vh', rot:  12 },
-          { x: '-12vw', y:  '24vh', rot: -22 },
-          { x:  '22vw', y:  '18vh', rot:  20 },
-        ];
-        imgs.forEach((img, index) => {
-          const vec = entryVectors[index % entryVectors.length];
-          gsap.fromTo(img,
-            { x: vec.x, y: vec.y, rotation: vec.rot, scale: 0.82, opacity: 0 },
-            {
-              x: '0vw', y: '0vh', rotation: 0, scale: 1, opacity: 1, ease: 'none',
-              scrollTrigger: { trigger: section, start: 'top bottom', end: 'top top', scrub: 0.3, fastScrollEnd: true }
-            }
-          );
+      if (buildInner) gsap.set(buildInner, { rotation: 16, transformOrigin: 'bottom left' });
+      if (boomInner)  gsap.set(boomInner,  { rotation: 16, transformOrigin: 'bottom left' });
+
+      // Parallax floating images if present
+      const buildImgs = build.querySelectorAll('.parallax-img');
+      const boomImgs  = boom.querySelectorAll('.parallax-img');
+      const entryVectors = [
+        { x: '-22vw', y: '-14vh', rot: -20 },
+        { x:  '20vw', y: '-16vh', rot:  18 },
+        { x: '-24vw', y:   '6vh', rot: -14 },
+        { x:  '10vw', y:  '22vh', rot:  12 },
+        { x: '-12vw', y:  '24vh', rot: -22 },
+        { x:  '22vw', y:  '18vh', rot:  20 },
+      ];
+      if (buildImgs.length) {
+        buildImgs.forEach((img, idx) => {
+          const vec = entryVectors[idx % entryVectors.length];
+          gsap.set(img, { x: vec.x, y: vec.y, rotation: vec.rot, scale: 0.82, opacity: 0 });
         });
+      }
+      if (boomImgs.length) {
+        boomImgs.forEach((img, idx) => {
+          const vec = entryVectors[idx % entryVectors.length];
+          gsap.set(img, { x: vec.x, y: vec.y, rotation: vec.rot, scale: 0.82, opacity: 0 });
+        });
+      }
+
+      // Master Timeline: 320% scroll distance with scrub: 0.8 for smooth, luxury pacing
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: stack,
+          start: 'top top',
+          end: '+=320%',
+          pin: true,
+          scrub: 0.8,
+          anticipatePin: 1,
+        }
       });
+
+      // ── Phase 1: BLINK Dwell Time (User comfortably reads BLINK) ──
+      tl.to({}, { duration: 0.6 });
+
+      // ── Phase 2: BUILD sweeps and rotates in over BLINK ──
+      tl.to(build, { yPercent: 0, duration: 1.2, ease: 'power1.inOut' });
+      if (buildInner) {
+        tl.to(buildInner, { rotation: 0, duration: 1.2, ease: 'power1.inOut' }, '<');
+      }
+      if (buildImgs.length) {
+        tl.to(buildImgs, { x: '0vw', y: '0vh', rotation: 0, scale: 1, opacity: 1, duration: 1.2, ease: 'power1.inOut' }, '<');
+      }
+
+      // ── Phase 3: BUILD Dwell Time (User comfortably reads BUILD) ──
+      tl.to({}, { duration: 0.6 });
+
+      // ── Phase 4: BOOM sweeps and rotates in over BUILD ──
+      tl.to(boom, { yPercent: 0, duration: 1.2, ease: 'power1.inOut' });
+      if (boomInner) {
+        tl.to(boomInner, { rotation: 0, duration: 1.2, ease: 'power1.inOut' }, '<');
+      }
+      if (boomImgs.length) {
+        tl.to(boomImgs, { x: '0vw', y: '0vh', rotation: 0, scale: 1, opacity: 1, duration: 1.2, ease: 'power1.inOut' }, '<');
+      }
+
+      // ── Phase 5: BOOM Dwell Time (User comfortably reads BOOM) ──
+      tl.to({}, { duration: 0.6 });
     });
 
     // Mobile & Tablet (<= 1024px) — Hardware-accelerated CSS Sticky Stacking handles smooth card overlap
     mm.add("(max-width: 1024px)", () => {
+      const stack = document.querySelector('.bbb-stack-wrapper');
+      if (stack) gsap.set(stack, { clearProps: "all" });
       parallaxSections.forEach(section => {
         gsap.set(section, { clearProps: "all" });
         const inner = section.querySelector('.parallax-sticky');
