@@ -29,7 +29,12 @@
         }
 
         var isForced = window.location.search.indexOf('loader=') !== -1;
-        var hasSeen = isBackNav || (!isForced && (sessionStorage.getItem('bb_preloader_seen') === '1' || localStorage.getItem('bb_preloader_seen') === '1'));
+        var hasSeen = isBackNav || (!isForced && (
+          sessionStorage.getItem('bb_preloader_seen') === '1' ||
+          sessionStorage.getItem('bb_loader_seen') === '1' ||
+          localStorage.getItem('bb_preloader_seen') === '1' ||
+          localStorage.getItem('bb_loader_seen') === '1'
+        ));
         var isPageTransition = !isBackNav && (sessionStorage.getItem('bb_page_transition') === '1');
 
         if (hasSeen || isPageTransition) {

@@ -335,27 +335,40 @@ document.addEventListener('DOMContentLoaded', () => {
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.has('loader')) {
         forceLoader = true;
+        sessionStorage.removeItem('bb_preloader_seen');
         sessionStorage.removeItem('bb_loader_seen');
+        localStorage.removeItem('bb_preloader_seen');
         localStorage.removeItem('bb_loader_seen');
         docEl.classList.remove('bb-loader-skip', 'loader-skip');
       }
     } catch (e) {}
 
-    // Run preloader ONLY at session start, not on every page load
+    // Run preloader ONLY at first visit, NEVER on reload or repeat page views
     let hasSeenInSession = false;
     try {
-      hasSeenInSession = !forceLoader && (sessionStorage.getItem('bb_loader_seen') === '1' || docEl.classList.contains('bb-loader-skip'));
+      hasSeenInSession = !forceLoader && (
+        sessionStorage.getItem('bb_preloader_seen') === '1' ||
+        sessionStorage.getItem('bb_loader_seen') === '1' ||
+        localStorage.getItem('bb_preloader_seen') === '1' ||
+        localStorage.getItem('bb_loader_seen') === '1' ||
+        docEl.classList.contains('bb-loader-skip') ||
+        docEl.classList.contains('loader-skip')
+      );
     } catch (e) {}
 
     if (hasSeenInSession) {
       docEl.classList.remove('is-preloading');
+      loader.style.display = 'none';
       loader.remove();
       return;
     }
 
-    // Mark as seen for this session
+    // Mark as seen in both sessionStorage and localStorage immediately
     try {
+      sessionStorage.setItem('bb_preloader_seen', '1');
       sessionStorage.setItem('bb_loader_seen', '1');
+      localStorage.setItem('bb_preloader_seen', '1');
+      localStorage.setItem('bb_loader_seen', '1');
     } catch (e) {}
 
     docEl.classList.add('is-preloading');
