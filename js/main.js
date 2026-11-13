@@ -324,98 +324,52 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const counterEl = document.getElementById('loader-percent');
     const barFill = document.getElementById('loader-bar-fill');
+    const statusEl = document.querySelector('.loader-status-bracket');
 
     let current = 0;
-    let target = 20;
-    let windowLoaded = false;
     let isExiting = false;
+    const duration = 1600; // 1.6s natural, fluid cinematic cadence
     const startTime = performance.now();
 
-    // 1. Advance on DOM Ready
-    if (document.readyState === 'interactive' || document.readyState === 'complete') {
-      target = Math.max(target, 55);
-    } else {
-      document.addEventListener('DOMContentLoaded', () => {
-        target = Math.max(target, 55);
-      }, { once: true });
-    }
-
-    // 2. Advance on Fonts Ready
-    if (document.fonts && document.fonts.ready) {
-      document.fonts.ready.then(() => {
-        target = Math.max(target, 78);
-      }).catch(() => {});
-    }
-
-    // 3. Advance on Critical Images
-    const imgs = Array.from(document.querySelectorAll('img[src]'));
-    if (imgs.length > 0) {
-      let loadedImgs = 0;
-      const checkImgs = () => {
-        loadedImgs++;
-        if (loadedImgs >= Math.min(imgs.length, 6)) {
-          target = Math.max(target, 88);
-        }
-      };
-      imgs.slice(0, 8).forEach(img => {
-        if (img.complete) {
-          checkImgs();
-        } else {
-          img.addEventListener('load', checkImgs, { once: true });
-          img.addEventListener('error', checkImgs, { once: true });
-        }
-      });
-    } else {
-      target = Math.max(target, 85);
-    }
-
-    // 4. Complete on Window Full Load
-    const onWindowComplete = () => {
-      windowLoaded = true;
-      target = 100;
-    };
-
-    if (document.readyState === 'complete') {
-      onWindowComplete();
-    } else {
-      window.addEventListener('load', onWindowComplete, { once: true });
-    }
-
-    // 5. Safety Ceiling: Never stall longer than 3.2s
-    setTimeout(() => {
-      windowLoaded = true;
-      target = 100;
-    }, 3200);
-
-    // 6. Smooth RAF Animation Loop
     function stepLoader(now) {
       if (isExiting) return;
 
       const elapsed = now - startTime;
-      // Guarantee smooth progression even if load was instantaneous
-      const minProgressByTime = Math.min(100, (elapsed / 650) * 85);
-      const effectiveTarget = Math.max(target, minProgressByTime);
+      const progress = Math.min(1, elapsed / duration);
 
-      if (current < effectiveTarget) {
-        const step = Math.max(0.6, (effectiveTarget - current) * 0.14);
-        current = Math.min(effectiveTarget, current + step);
+      // Smooth custom organic curve: brisk initial start, steady fluid body, gentle deceleration to 100%
+      let eased;
+      if (progress < 0.25) {
+        // 0% -> 30% responsive acceleration
+        eased = (progress / 0.25) * 0.30;
+      } else if (progress < 0.75) {
+        // 30% -> 82% organic steady momentum
+        const t = (progress - 0.25) / 0.50;
+        eased = 0.30 + (1 - Math.pow(1 - t, 1.4)) * 0.52;
+      } else {
+        // 82% -> 100% smooth ease-in to completion
+        const t = (progress - 0.75) / 0.25;
+        eased = 0.82 + (1 - Math.pow(1 - t, 2.2)) * 0.18;
       }
 
-      const displayVal = Math.floor(current);
+      current = Math.min(100, Math.floor(eased * 100));
 
       if (counterEl) {
-        counterEl.textContent = displayVal + '%';
+        counterEl.textContent = current + '%';
       }
       if (barFill) {
         barFill.style.width = current + '%';
       }
 
-      if (current >= 99.5 && windowLoaded && elapsed >= 450) {
+      if (progress < 1) {
+        requestAnimationFrame(stepLoader);
+      } else {
         isExiting = true;
         if (counterEl) counterEl.textContent = '100%';
         if (barFill) barFill.style.width = '100%';
+        if (statusEl) statusEl.textContent = '[Ready]';
 
-        // Satisfying pause at 100% before curtain lifts
+        // Brief natural pause at 100% so user registers completion
         setTimeout(() => {
           loader.classList.add('hidden');
 
@@ -424,13 +378,13 @@ document.addEventListener('DOMContentLoaded', () => {
           if (fabContainer && typeof gsap !== 'undefined') {
             gsap.fromTo(fabContainer,
               { opacity: 0, scale: 0.8 },
-              { opacity: 1, scale: 1, duration: 0.35, delay: 0.3, ease: 'back.out(1.4)', clearProps: 'all' }
+              { opacity: 1, scale: 1, duration: 0.35, delay: 0.2, ease: 'back.out(1.4)', clearProps: 'all' }
             );
           }
           if (agentBtn && typeof gsap !== 'undefined') {
             gsap.fromTo(agentBtn,
               { opacity: 0, scale: 0.8 },
-              { opacity: 1, scale: 1, duration: 0.35, delay: 0.3, ease: 'back.out(1.4)', clearProps: 'all' }
+              { opacity: 1, scale: 1, duration: 0.35, delay: 0.2, ease: 'back.out(1.4)', clearProps: 'all' }
             );
           }
 
@@ -439,9 +393,7 @@ document.addEventListener('DOMContentLoaded', () => {
             docEl.classList.remove('is-preloading');
             loader.style.display = 'none';
           }, 850);
-        }, 160);
-      } else {
-        requestAnimationFrame(stepLoader);
+        }, 220);
       }
     }
 
