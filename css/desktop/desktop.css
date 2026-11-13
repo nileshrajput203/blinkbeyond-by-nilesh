@@ -13,66 +13,7 @@
   --container-px: clamp(16px, 5vw, 80px);
 }
 
-/* ========================================
-   PRELOADER — IMPROVED
-   ======================================== */
-.page-loader {
-  background:
-    radial-gradient(ellipse 80% 60% at 50% 40%, rgba(100,100,255,0.18) 0%, transparent 70%),
-    linear-gradient(150deg, #3a3bff 0%, #2d2ef0 45%, #2020cc 100%);
-}
-
-.loader-logo-wrap {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.loader-logo-img {
-  width: clamp(120px, 22vw, 320px);
-  height: auto;
-  opacity: 0.25;
-  transition: opacity 0.1s linear;
-  display: block;
-  margin: 0 auto;
-  filter: drop-shadow(0 0 32px rgba(99, 80, 255, 0.6));
-}
-
-.loader-tagline {
-  font-size: clamp(11px, 1.1vw, 14px);
-  letter-spacing: clamp(2px, 0.4vw, 6px);
-  text-transform: uppercase;
-  color: rgba(255,255,255,0.45);
-  margin-top: clamp(20px, 2.5vh, 36px);
-}
-
-.loader-bottom {
-  gap: clamp(16px, 2vw, 28px);
-}
-
-.loader-bar-track {
-  width: clamp(100px, 14vw, 220px);
-  height: 2px;
-  background: rgba(255,255,255,0.15);
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-.loader-bar-fill {
-  height: 100%;
-  background: linear-gradient(90deg, rgba(255,255,255,0.6), #ffffff);
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(255,255,255,0.5);
-  transition: width 0.1s linear;
-}
-
-.loader-loading-text {
-  font-family: var(--font-display);
-  font-size: 10px;
-  letter-spacing: 2.5px;
-  color: rgba(255,255,255,0.35);
-  text-transform: uppercase;
-}
+/* Preloader handled uniformly by style.css */
 
 /* Smooth exit */
 .page-loader.hidden {

@@ -352,7 +352,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (fillText) {
           const pct = Math.floor(eased * 100);
-          fillText.style.background = `linear-gradient(to right, #ffffff ${pct}%, rgba(255,255,255,0.18) ${pct}%)`;
+          fillText.style.background = `linear-gradient(to right, #ffffff ${pct}%, rgba(255,255,255,0.28) ${pct}%)`;
           fillText.style.webkitBackgroundClip = 'text';
           fillText.style.backgroundClip = 'text';
           fillText.style.webkitTextFillColor = 'transparent';

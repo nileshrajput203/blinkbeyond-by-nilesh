@@ -8,7 +8,7 @@
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Caveat:wght@400;700&family=DM+Sans:wght@400;500;600;700&family=Righteous&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Caveat:wght@400;700&family=DM+Sans:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&family=Syne:wght@700;800&family=Righteous&display=swap" rel="stylesheet">
   <meta property="og:title" content="Contact Us | Blink Beyond">
   <meta property="og:description" content="Get in touch with Blink Beyond. Let's work together to build your brand and drive growth.">
   <meta property="og:image" content="https://blinkbeyond.co.in/assets/og-image.jpg">
@@ -60,15 +60,28 @@
   <div class="page-loader" id="page-loader">
     <div class="loader-bg-glow"></div>
     <div class="loader-center">
-      <div class="loader-wordmark-wrap">
-        <span class="loader-fill-ghost">BLINK BEYOND</span>
-        <span class="loader-fill-text" id="loader-fill-text">BLINK BEYOND</span>
+      <div class="loader-title-row">
+        <div class="loader-wordmark-wrap">
+          <span class="loader-fill-ghost">BLINK BEYOND</span>
+          <span class="loader-fill-text" id="loader-fill-text">BLINK BEYOND</span>
+        </div>
+        <span class="loader-reg-ring" aria-hidden="true">
+          <span class="loader-reg-dot"></span>
+        </span>
       </div>
-      <p class="loader-tagline">Where Brands Blink &amp; Boom</p>
+      <div class="loader-tagline-box">
+        <span class="corner-bracket corner-tl"></span>
+        <span class="corner-bracket corner-tr"></span>
+        <span class="corner-bracket corner-bl"></span>
+        <span class="corner-bracket corner-br"></span>
+        <span class="loader-tagline-text">WHERE BRANDS BLINK &amp; BOOM</span>
+        <svg class="loader-tagline-wave" width="28" height="10" viewBox="0 0 28 10" fill="none" aria-hidden="true">
+          <path d="M1 5 C 3.5 1.5, 6.5 1.5, 9 5 C 11.5 8.5, 14.5 8.5, 17 5 C 19.5 1.5, 22.5 1.5, 25 5" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </div>
     </div>
     <div class="loader-bottom">
-      <div class="loader-counter"><span id="loader-percent">0</span>%</div>
-      <div class="loader-bar-track"><div class="loader-bar-fill" id="loader-bar-fill"></div></div>
+      <div class="loader-counter" id="loader-percent" data-value="0%">0%</div>
       <div class="loader-loading-text">[Loading...]</div>
     </div>
   </div>
