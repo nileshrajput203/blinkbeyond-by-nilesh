@@ -1354,7 +1354,7 @@
 .bbb-stack-wrapper {
   display: block;
   position: relative;
-  isolation: auto;
+  isolation: isolate;
 }
 
 
