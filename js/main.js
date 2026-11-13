@@ -261,23 +261,60 @@ document.addEventListener('DOMContentLoaded', () => {
      FAB TOGGLE (floating action button)
      ======================================== */
   (function() {
-    const fabToggle  = document.querySelector('.fab-toggle');
-    const fabOptions = document.querySelector('.fab-options');
-    if (!fabToggle || !fabOptions) return;
+    const fabContainer = document.querySelector('.fab-container');
+    const fabToggle    = document.querySelector('.fab-toggle');
+    const fabOptions   = document.querySelector('.fab-options');
+    if (!fabContainer || !fabToggle || !fabOptions) return;
 
-    fabToggle.addEventListener('click', () => {
-      const isOpen = fabOptions.classList.contains('open');
-      fabOptions.classList.toggle('open', !isOpen);
-      fabToggle.classList.toggle('open', !isOpen);
-      fabToggle.setAttribute('aria-expanded', String(!isOpen));
+    let isLockedOpen = false;
+    let leaveTimeout = null;
+
+    function openFab() {
+      if (leaveTimeout) clearTimeout(leaveTimeout);
+      fabContainer.classList.add('open');
+      fabOptions.classList.add('open');
+      fabToggle.classList.add('open');
+      fabToggle.setAttribute('aria-expanded', 'true');
+    }
+
+    function closeFab(force) {
+      if (leaveTimeout) clearTimeout(leaveTimeout);
+      if (isLockedOpen && !force) return;
+      fabContainer.classList.remove('open');
+      fabOptions.classList.remove('open');
+      fabToggle.classList.remove('open');
+      fabToggle.setAttribute('aria-expanded', 'false');
+      isLockedOpen = false;
+    }
+
+    // Click locks it open / closes it
+    fabToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (isLockedOpen) {
+        closeFab(true);
+      } else {
+        isLockedOpen = true;
+        openFab();
+      }
+    });
+
+    // Hover with buffer so moving cursor upwards NEVER flickers or closes
+    fabContainer.addEventListener('mouseenter', () => {
+      openFab();
+    });
+
+    fabContainer.addEventListener('mouseleave', () => {
+      if (!isLockedOpen) {
+        leaveTimeout = setTimeout(() => {
+          closeFab(false);
+        }, 320); // 320ms buffer protects cursor transit
+      }
     });
 
     // Close on outside click
-    document.addEventListener('click', e => {
+    document.addEventListener('click', (e) => {
       if (!e.target.closest('.fab-container')) {
-        fabOptions.classList.remove('open');
-        fabToggle.classList.remove('open');
-        fabToggle.setAttribute('aria-expanded', 'false');
+        closeFab(true);
       }
     });
   })();
