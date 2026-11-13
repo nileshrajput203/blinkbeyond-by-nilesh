@@ -1244,8 +1244,7 @@
   }
 
   /* ========================================
-     BLINK / BUILD / BOOM — MOBILE STICKY STACKING OVERLAP
-     Pure CSS 60/120fps GPU-accelerated card overlap effect
+     BLINK / BUILD / BOOM — MOBILE LAYOUT (GSAP Pinning & Card Overlap)
      ======================================== */
   .bbb-stack-wrapper {
     position: relative !important;
@@ -1259,14 +1258,13 @@
     isolation: isolate !important;
   }
 
-  /* Each section is sticky full viewport so incoming cards slide and overlap the previous card */
+  /* Base section container: full viewport height, allows GSAP pin and rotational sweep */
   #section-blink,
   #section-build,
   #section-boom {
-    position: sticky !important;
-    top: 0 !important;
-    height: 100svh !important;
-    min-height: 100svh !important;
+    position: relative;
+    height: 100vh;
+    min-height: 100vh;
     padding: 0 !important;
     margin: 0 !important;
     overflow: hidden !important;
@@ -1275,36 +1273,32 @@
     align-items: center !important;
     justify-content: center !important;
     box-sizing: border-box !important;
-    will-change: transform !important;
+    will-change: transform;
   }
 
   /* Base Card 1: BLINK (Light background) */
   #section-blink {
     z-index: 1 !important;
     background: #F3F3F4 !important;
-    border-radius: 0 !important;
-    box-shadow: none !important;
   }
 
-  /* Card 2: BUILD (Dark background - slides and overlaps BLINK with sleek top curve & deep shadow) */
+  /* Card 2: BUILD (Dark background - rotates and overlaps BLINK) */
   #section-build {
     z-index: 2 !important;
     background: #0a0a0a !important;
     border-top: 1px solid rgba(255, 255, 255, 0.14) !important;
-    border-radius: 28px 28px 0 0 !important;
     box-shadow: 0 -20px 50px rgba(0, 0, 0, 0.65) !important;
   }
 
-  /* Card 3: BOOM (Electric Blue background - slides and overlaps BUILD with sleek top curve & deep shadow) */
+  /* Card 3: BOOM (Electric Blue background - rotates and overlaps BUILD) */
   #section-boom  {
     z-index: 3 !important;
     background: var(--blue, #3D3DFF) !important;
     border-top: 1px solid rgba(255, 255, 255, 0.22) !important;
-    border-radius: 28px 28px 0 0 !important;
     box-shadow: 0 -25px 60px rgba(0, 0, 0, 0.7) !important;
   }
 
-  /* Next section after stack scrolls cleanly over BOOM */
+  /* Next section after stack */
   .trusted-section {
     position: relative !important;
     z-index: 10 !important;
@@ -1312,7 +1306,7 @@
     box-shadow: 0 -20px 50px rgba(0, 0, 0, 0.3) !important;
   }
 
-  /* Inner wrapper inside card — full viewport height & perfectly centered */
+  /* Inner wrapper inside card — full viewport height, transform-origin bottom left for rotation */
   #section-blink .parallax-sticky,
   #section-build .parallax-sticky,
   #section-boom  .parallax-sticky {
@@ -1324,9 +1318,8 @@
     flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
-    transform: none !important;
-    will-change: auto !important;
-    transform-origin: unset !important;
+    will-change: transform !important;
+    transform-origin: bottom left !important;
     padding: 32px 20px !important;
     background: transparent !important;
     box-sizing: border-box !important;

@@ -201,19 +201,16 @@
 
 
 /* ========================================
-   BLINK / BUILD / BOOM — MOBILE & TABLET STICKY STACK
-   Overrides earlier mobile rules (placed last so !important wins)
+   BLINK / BUILD / BOOM — TABLET LAYOUT (GSAP Pinning & Card Overlap)
    ======================================== */
 @media (max-width: 1024px) {
 
-  /* Each card sticks at top and the next slides over it */
   #section-blink,
   #section-build,
   #section-boom {
-    position: sticky !important;
-    top: 0 !important;
-    height: 100svh !important;
-    min-height: 100svh !important;
+    position: relative;
+    height: 100vh;
+    min-height: 100vh;
     padding: 0 !important;
     overflow: hidden !important;
     display: flex !important;
@@ -222,10 +219,10 @@
   }
 
   #section-blink { z-index: 1; background: #F3F3F4 !important; }
-  #section-build { z-index: 2; background: #0a0a0a !important; }
-  #section-boom  { z-index: 3; background: var(--blue, #3D3DFF) !important; }
+  #section-build { z-index: 2; background: #0a0a0a !important; box-shadow: 0 -20px 50px rgba(0, 0, 0, 0.6) !important; border-top: 1px solid rgba(255, 255, 255, 0.12) !important; }
+  #section-boom  { z-index: 3; background: var(--blue, #3D3DFF) !important; box-shadow: 0 -20px 50px rgba(0, 0, 0, 0.6) !important; border-top: 1px solid rgba(255, 255, 255, 0.2) !important; }
 
-  /* Inner wrapper — full size, centered, no GSAP transforms */
+  /* Inner wrapper — full size, centered, transform-origin bottom left for rotational sweep */
   #section-blink .parallax-sticky,
   #section-build .parallax-sticky,
   #section-boom  .parallax-sticky {
@@ -237,9 +234,8 @@
     flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
-    transform: none !important;
-    will-change: auto !important;
-    transform-origin: unset !important;
+    will-change: transform !important;
+    transform-origin: bottom left !important;
     padding: 48px 28px !important;
     background: transparent !important;
     gap: 20px !important;
