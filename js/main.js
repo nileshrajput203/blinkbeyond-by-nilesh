@@ -259,6 +259,7 @@ document.addEventListener('DOMContentLoaded', () => {
   })();
   /* ========================================
      FAB TOGGLE (floating action button)
+     Press to Open & Press to Close
      ======================================== */
   (function() {
     const fabContainer = document.querySelector('.fab-container');
@@ -266,56 +267,56 @@ document.addEventListener('DOMContentLoaded', () => {
     const fabOptions   = document.querySelector('.fab-options');
     if (!fabContainer || !fabToggle || !fabOptions) return;
 
-    let isLockedOpen = false;
-    let leaveTimeout = null;
-
     function openFab() {
-      if (leaveTimeout) clearTimeout(leaveTimeout);
       fabContainer.classList.add('open');
       fabOptions.classList.add('open');
       fabToggle.classList.add('open');
       fabToggle.setAttribute('aria-expanded', 'true');
     }
 
-    function closeFab(force) {
-      if (leaveTimeout) clearTimeout(leaveTimeout);
-      if (isLockedOpen && !force) return;
+    function closeFab() {
       fabContainer.classList.remove('open');
       fabOptions.classList.remove('open');
       fabToggle.classList.remove('open');
       fabToggle.setAttribute('aria-expanded', 'false');
-      isLockedOpen = false;
     }
 
-    // Click locks it open / closes it
-    fabToggle.addEventListener('click', (e) => {
-      e.stopPropagation();
-      if (isLockedOpen) {
-        closeFab(true);
+    function toggleFab(e) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      const isOpen = fabContainer.classList.contains('open') || fabToggle.classList.contains('open');
+      if (isOpen) {
+        closeFab();
       } else {
-        isLockedOpen = true;
         openFab();
       }
-    });
+    }
 
-    // Hover with buffer so moving cursor upwards NEVER flickers or closes
-    fabContainer.addEventListener('mouseenter', () => {
-      openFab();
-    });
+    // When pressed (clicked), it opens; when pressed again, it closes
+    fabToggle.addEventListener('click', toggleFab);
 
-    fabContainer.addEventListener('mouseleave', () => {
-      if (!isLockedOpen) {
-        leaveTimeout = setTimeout(() => {
-          closeFab(false);
-        }, 320); // 320ms buffer protects cursor transit
-      }
-    });
-
-    // Close on outside click
+    // Close when clicking outside of fab-container
     document.addEventListener('click', (e) => {
       if (!e.target.closest('.fab-container')) {
-        closeFab(true);
+        closeFab();
       }
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeFab();
+      }
+    });
+
+    // When an option is clicked, smoothly close after trigger
+    const options = fabOptions.querySelectorAll('.fab-option');
+    options.forEach(opt => {
+      opt.addEventListener('click', () => {
+        setTimeout(closeFab, 150);
+      });
     });
   })();
 

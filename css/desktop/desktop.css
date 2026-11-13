@@ -1081,7 +1081,7 @@
 
 
 /* ========================================
-   FAB — IMPROVED WITH HITBOX BRIDGE
+   FAB — PRESS TO OPEN & PRESS TO CLOSE
    ======================================== */
 /* ── FAB SPEED DIAL — fixed bottom-right, options fan upward ── */
 .fab-container {
@@ -1095,18 +1095,6 @@
   gap: 12px;
 }
 
-/* Invisible hit bridge so moving cursor between buttons never drops hover or closes */
-.fab-container::before {
-  content: '';
-  position: absolute;
-  top: -24px;
-  bottom: -16px;
-  right: -24px;
-  left: -48px;
-  pointer-events: all;
-  z-index: 0;
-}
-
 /* Options sit ABOVE the toggle */
 .fab-options {
   display: flex;
@@ -1117,13 +1105,12 @@
   visibility: hidden;
   pointer-events: none;
   transform: translateY(16px);
-  transition: opacity 0.24s ease, transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.24s;
+  transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.25s;
   position: relative;
   z-index: 2;
 }
 
-/* Open on hover over container OR when open class is active */
-.fab-container:hover .fab-options,
+/* Open ONLY when pressed (.open class active) */
 .fab-container.open .fab-options,
 .fab-options.open {
   opacity: 1 !important;
@@ -1148,12 +1135,11 @@
   transform: translateY(16px) scale(0.85);
   pointer-events: none;
   transition:
-    opacity 0.24s ease,
+    opacity 0.25s ease,
     transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1),
     box-shadow 0.2s ease;
 }
 
-.fab-container:hover .fab-option,
 .fab-container.open .fab-option,
 .fab-options.open .fab-option {
   opacity: 1 !important;
@@ -1162,19 +1148,17 @@
   transform: translateY(0) scale(1) !important;
 }
 
-/* Stagger each child */
-.fab-container:hover .fab-option:nth-child(1),
+/* Stagger each child animation */
 .fab-container.open .fab-option:nth-child(1),
 .fab-options.open .fab-option:nth-child(1) {
-  transition-delay: 0.03s;
+  transition-delay: 0.04s;
 }
-.fab-container:hover .fab-option:nth-child(2),
 .fab-container.open .fab-option:nth-child(2),
 .fab-options.open .fab-option:nth-child(2) {
-  transition-delay: 0.08s;
+  transition-delay: 0.09s;
 }
 
-/* Show label on hover of option */
+/* Show label tooltip on hover of option */
 .fab-option:hover {
   transform: scale(1.1) translateY(-2px) !important;
   box-shadow: 0 8px 24px rgba(0,0,0,0.36) !important;
@@ -1212,7 +1196,7 @@
   color: white;
 }
 .instagram-btn:hover {
-  box-shadow: 0 8px 24px rgba(214,36,159,0.5);
+  box-shadow: 0 8px 24px rgba(214,36,159,0.5) !important;
 }
 
 /* WhatsApp */
@@ -1221,7 +1205,7 @@
   color: white;
 }
 .whatsapp-btn:hover {
-  box-shadow: 0 8px 24px rgba(37,211,102,0.45);
+  box-shadow: 0 8px 24px rgba(37,211,102,0.45) !important;
 }
 
 /* ── Toggle button ── */
@@ -1248,7 +1232,11 @@
   transform: scale(1.08);
 }
 
-.fab-container:hover .fab-toggle,
+.fab-toggle:active {
+  transform: scale(0.95);
+}
+
+/* When open (after pressed) */
 .fab-container.open .fab-toggle,
 .fab-toggle.open {
   background: #111111;
@@ -1256,20 +1244,22 @@
   transform: rotate(45deg);
 }
 
-.fab-container:hover .fab-toggle:hover,
 .fab-container.open .fab-toggle:hover,
 .fab-toggle.open:hover {
   transform: rotate(45deg) scale(1.08);
 }
 
+.fab-container.open .fab-toggle:active,
+.fab-toggle.open:active {
+  transform: rotate(45deg) scale(0.95);
+}
+
 .fab-toggle .icon-chat  { display: block; }
 .fab-toggle .icon-close { display: none;  }
 
-.fab-container:hover .fab-toggle .icon-chat,
 .fab-container.open .fab-toggle .icon-chat,
 .fab-toggle.open .icon-chat  { display: none !important; }
 
-.fab-container:hover .fab-toggle .icon-close,
 .fab-container.open .fab-toggle .icon-close,
 .fab-toggle.open .icon-close { display: block !important; }
 
