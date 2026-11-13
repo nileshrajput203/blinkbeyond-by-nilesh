@@ -45,10 +45,60 @@ window.addEventListener('load', () => {
 (function() {
   var overlay = document.querySelector('.page-transition-overlay');
 
+  function hideTransitionOverlay() {
+    var ov = document.querySelector('.page-transition-overlay');
+    if (ov) {
+      if (typeof gsap !== 'undefined') gsap.killTweensOf(ov);
+      ov.style.display = 'none';
+      ov.style.pointerEvents = 'none';
+      ov.style.transform = 'translateY(-100%)';
+    }
+    document.documentElement.classList.remove('bb-entering');
+    document.documentElement.style.background = '';
+    document.documentElement.style.backgroundColor = '';
+  }
+
+  // Detect back-forward navigation (browser back button, back gestures, history traversal)
+  var navEntries = window.performance && window.performance.getEntriesByType && window.performance.getEntriesByType('navigation');
+  var isBackNav = (navEntries && navEntries[0] && navEntries[0].type === 'back_forward') || 
+                  (window.performance && window.performance.navigation && window.performance.navigation.type === 2);
+
+  if (isBackNav) {
+    try { sessionStorage.removeItem('bb_page_transition'); } catch(e) {}
+    hideTransitionOverlay();
+  }
+
+  // Ensure bfcache restores instantly without any transitions, overlays, or delays
+  window.addEventListener('pageshow', function(e) {
+    var nav = window.performance && window.performance.getEntriesByType && window.performance.getEntriesByType('navigation');
+    var isBack = e.persisted || (nav && nav[0] && nav[0].type === 'back_forward') || (window.performance && window.performance.navigation && window.performance.navigation.type === 2);
+    if (isBack) {
+      try { sessionStorage.removeItem('bb_page_transition'); } catch(err) {}
+      hideTransitionOverlay();
+    }
+  });
+
+  // Reset overlay state before the page enters bfcache snapshot
+  window.addEventListener('pagehide', function() {
+    var ov = document.querySelector('.page-transition-overlay');
+    if (ov) {
+      ov.style.display = 'none';
+      ov.style.pointerEvents = 'none';
+      ov.style.transform = 'translateY(-100%)';
+    }
+  });
+
+  // Reset on any history popstate
+  window.addEventListener('popstate', function() {
+    try { sessionStorage.removeItem('bb_page_transition'); } catch(err) {}
+    hideTransitionOverlay();
+  });
+
   function triggerPageTransition(dest) {
     try { sessionStorage.setItem('bb_page_transition', '1'); } catch(e) {}
     var currentOverlay = document.querySelector('.page-transition-overlay');
     if (currentOverlay && typeof gsap !== 'undefined') {
+      currentOverlay.style.display = 'block';
       gsap.killTweensOf(currentOverlay);
       gsap.set(currentOverlay, { y: '100%', pointerEvents: 'all' });
       gsap.to(currentOverlay, {
@@ -80,7 +130,9 @@ window.addEventListener('load', () => {
   if (!overlay) return;
 
   var cameFromTransition = false;
-  try { cameFromTransition = sessionStorage.getItem('bb_page_transition') === '1'; } catch(e) {}
+  if (!isBackNav) {
+    try { cameFromTransition = sessionStorage.getItem('bb_page_transition') === '1'; } catch(e) {}
+  }
 
   if (cameFromTransition) {
     try { sessionStorage.removeItem('bb_page_transition'); } catch(e) {}
@@ -89,6 +141,7 @@ window.addEventListener('load', () => {
     document.documentElement.classList.remove('bb-entering');
 
     if (typeof gsap !== 'undefined') {
+      overlay.style.display = 'block';
       gsap.killTweensOf(overlay);
       gsap.set(overlay, { y: '0%', pointerEvents: 'all' });
       requestAnimationFrame(function() {
@@ -99,6 +152,7 @@ window.addEventListener('load', () => {
           ease: 'power2.out',
           onComplete: function() {
             gsap.set(overlay, { pointerEvents: 'none' });
+            overlay.style.display = 'none';
             document.documentElement.style.background = '';
             document.documentElement.style.backgroundColor = '';
             scrollToHash(false);
@@ -106,13 +160,14 @@ window.addEventListener('load', () => {
         });
       });
     } else {
-      overlay.style.display = 'none';
-      document.documentElement.style.background = '';
-      document.documentElement.style.backgroundColor = '';
+      hideTransitionOverlay();
       scrollToHash(false);
     }
-  } else if (window.location.hash) {
-    scrollToHash(false);
+  } else {
+    hideTransitionOverlay();
+    if (window.location.hash) {
+      scrollToHash(false);
+    }
   }
 
   function normalizePath(p) {
@@ -126,6 +181,19 @@ window.addEventListener('load', () => {
     if (!href || href.startsWith('http') || href.startsWith('mailto') || href.startsWith('tel') || href.startsWith('javascript')) return;
     if (link.target === '_blank') return;
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+
+    // Completely disable transitions on any Back link or link explicitly flagged
+    var isBackLink = link.hasAttribute('data-no-transition') || 
+                     link.hasAttribute('data-back') || 
+                     link.classList.contains('back-btn') || 
+                     link.classList.contains('cs-back-link') ||
+                     (link.textContent && link.textContent.trim().toLowerCase().startsWith('back'));
+
+    if (isBackLink) {
+      try { sessionStorage.removeItem('bb_page_transition'); } catch(err) {}
+      hideTransitionOverlay();
+      return; // Direct native navigation without transition
+    }
 
     // Check if it's the current page
     try {

@@ -26,9 +26,17 @@
     }
     (function() {
       try {
+        var navEntries = window.performance && window.performance.getEntriesByType && window.performance.getEntriesByType('navigation');
+        var isBackNav = (navEntries && navEntries[0] && navEntries[0].type === 'back_forward') || 
+                        (window.performance && window.performance.navigation && window.performance.navigation.type === 2);
+
+        if (isBackNav) {
+          try { sessionStorage.removeItem('bb_page_transition'); } catch(e) {}
+        }
+
         var isForced = window.location.search.indexOf('loader=') !== -1;
-        var hasSeen = !isForced && (sessionStorage.getItem('bb_preloader_seen') === '1' || localStorage.getItem('bb_preloader_seen') === '1');
-        var isPageTransition = sessionStorage.getItem('bb_page_transition') === '1';
+        var hasSeen = isBackNav || (!isForced && (sessionStorage.getItem('bb_preloader_seen') === '1' || localStorage.getItem('bb_preloader_seen') === '1'));
+        var isPageTransition = !isBackNav && (sessionStorage.getItem('bb_page_transition') === '1');
 
         if (hasSeen || isPageTransition) {
           document.documentElement.classList.add('bb-loader-skip');
